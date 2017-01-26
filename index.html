@@ -12,6 +12,16 @@
 	$.getJSON("https://spreadsheets.google.com/feeds/list/1C-wp3RLU9Vv5QCEH6-akGWTNIyXI_xz9E6GrhCD6nMQ/od6/public/values?alt=json", function(data) {
 		//var datatata = data;
 		$("#root").html(data.feed.entry[0]['gsx$titre']['$t']);
+		var valmy = data.feed.entry;
+		var lisAr = [];
+		lisAr.push('<ul>');
+		$(valmy).each(function(i, el){
+			lisAr.push('<li>' + el['gsx$lienimdb']['$t'].split('/')[4] + '</li>');
+		});
+		lisAr.push('</ul>');
+		
+		
+		$("#root").html(lisAr.join(''));
 	});
 
     </script>
