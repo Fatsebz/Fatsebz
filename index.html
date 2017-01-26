@@ -9,8 +9,9 @@
     <div id="root"></div>
     <script type="text/javascript">
 	 
-	  $.getJSON("http://cors.io/spreadsheets.google.com/feeds/list/0AtMEoZDi5-pedElCS1lrVnp0Yk1vbFdPaUlOc3F3a2c/od6/public/values?alt=json", function(data) {
-		$("#root").html(data.feed.entry[0]['gsx$title']['$t']);
+	$.getJSON("https://spreadsheets.google.com/feeds/list/1C-wp3RLU9Vv5QCEH6-akGWTNIyXI_xz9E6GrhCD6nMQ/od6/public/values?alt=json", function(data) {
+		//var datatata = data;
+		$("#root").html(data.feed.entry[0]['gsx$titre']['$t']);
 	});
 
     </script>
