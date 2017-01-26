@@ -3,18 +3,16 @@
   <head>
     <meta charset="UTF-8" />
     <title>Hello World</title>
-    <script src="https://unpkg.com/react@latest/dist/react.js"></script>
-    <script src="https://unpkg.com/react-dom@latest/dist/react-dom.js"></script>
-    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="text/babel">
-
-      ReactDOM.render(
-        <h1>Hello, world!</h1>,
-        document.getElementById('root')
-      );
+    <script type="text/javascript">
+	  $("#root").html("lapinou");
+	  /*$.getJSON("http://cors.io/spreadsheets.google.com/feeds/list/0AtMEoZDi5-pedElCS1lrVnp0Yk1vbFdPaUlOc3F3a2c/od6/public/values?alt=json", function(data) {
+	  //first row "title" column
+	  console.log(data.feed.entry[0]['gsx$title']['$t']);
+	});*/
 
     </script>
   </body>
