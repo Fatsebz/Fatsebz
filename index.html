@@ -5,63 +5,87 @@
     <title>Hello World</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<style>
-	#aha {
+	#allocineFrame {
 		height:900px;
 		width:100%;
 	}
 	#gallery{
 		float : left;
 		height:100%;
-		width:50%;
+		width:20%;
+	}
+	#infos{
+		float : left;
+		height:100%;
+		width:40%;
 	}
 	#preview{
 		float : right;
 		height:100%;
-		width:50%;
+		width:40%;
 	}
 
 </style>
   </head>
   <body>
 	<div id="gallery"></div>
+	<div id="infos"></div>
 	<div id="preview">
-		<iframe id="aha" src="http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html"></iframe>
-	</div>	
-	<div id="ecstasy"></div>
+		<iframe id="allocineFrame"></iframe>
+	</div>
     <div id="root"></div>
     <script type="text/javascript">
 	 
+$( document ).ready(function() {
+	
+	function reloadAllocineFrame(allocineId){
+		$("#allocineFrame").attr("src", "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + allocineId + ".html");
+	}
+	
+	function buildImdbLink(imdbId, title){
+		return "<a href='https://www.imdb.com/title/" + imdbId + "/'>" + title + "</a>";
+	}
+	 
 	$.getJSON("https://spreadsheets.google.com/feeds/list/1C-wp3RLU9Vv5QCEH6-akGWTNIyXI_xz9E6GrhCD6nMQ/od6/public/values?alt=json", function(data) {
 		//var datatata = data;
-		$("#gallery").html(data.feed.entry[0]['gsx$titre']['$t']);
+		$("#gallery").html(data.feed.entry[0]["gsx$titre"]["$t"]);
 		var valmy = data.feed.entry;
 		var lisAr = [];
-		lisAr.push('<ul>');
+		
 		$(valmy).each(function(i, el){
-			lisAr.push('<li>' + el['gsx$lienimdb']['$t'].split('/')[4] + '</li>');
+			var originalName = el["gsx$titre"]["$t"];
+			var imdbId = el["gsx$lienimdb"]["$t"].split("/")[4];
+			lisAr.push("<li id='" + imdbId + "'>" + originalName + "</li>");
 		});
-		lisAr.push('</ul>');
+
+		$("#gallery").html("<ul>" + lisAr.join("") + "</ul>");
 		
-		
-		$("#gallery").html(lisAr.join(""));
-		getImdbTitle("Saint amour");
-		
+		$("#gallery li").on("click", function() {
+			getImdbTitle(this.id, []);
+		});
+			
+		$("#gallery li").first().click();
 	});
 	
-	function getImdbTitle(movieName){
-		$.getJSON("http://www.omdbapi.com/?i=tt1736633", function(data) {
-			getAlloCineId(data.Title);
+	function getImdbTitle(imdbId, currData){
+		$.getJSON("https://www.omdbapi.com/?i=" + imdbId, function(data) {
+			currData.push("Note imdb : " + data.imdbRating);
+			currData.push("Lien imdb : " + buildImdbLink(imdbId, data.Title + " ("+ data.Year + ")"));
+			getAlloCineId(data, currData);
 		});
 	}
 	
-	function getAlloCineId(movieName){
-		$.getJSON(encodeURI("http://essearch.allocine.net/fr/autocomplete?geo2=83094&q=" + movieName), function(data) {
-			getAlloCinePressRating(data[0].id);
+	function getAlloCineId(imdbData, currData){
+		$.getJSON(encodeURI("https://essearch.allocine.net/fr/autocomplete?geo2=83094&q=" + imdbData.Title.replace(":", "") + " " + imdbData.Year), function(data) {	
+			currData.push("Lien allocine : <a href='" + "http://www.allocine.fr/film/fichefilm_gen_cfilm=" + data[0].id + ".html'>" + data[0].title2 + "</a>");		
+			getAlloCinePressRating(data[0].id, currData);
 		});
 	}
 	
-	function getAlloCinePressRating(movieName, movieId){
-		//$("#ecstasy").html(movieName + " : " + "");
+	function getAlloCinePressRating(movieId, currData){
+		
+		reloadAllocineFrame(movieId);
+		$("#infos").html(currData.join("<br/>"));
 		
 		/*$.getJSON("http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html", function(data) {
 			var toto = data;
@@ -78,7 +102,14 @@
 //http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html
 
 //http://essearch.allocine.net/fr/autocomplete?geo2=83094&q=saint%20amour
+
+	//https://v2.sg.media-imdb.com/suggests/m/max_et_les.json
+	//https://v2.sg.media-imdb.com/suggests/c/choco.json
+
 	}
+	
+		
+	});
 
     </script>
   </body>
