@@ -4,14 +4,36 @@
     <meta charset="UTF-8" />
     <title>Hello World</title>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<style>
+	#aha {
+		height:900px;
+		width:100%;
+	}
+	#gallery{
+		float : left;
+		height:100%;
+		width:50%;
+	}
+	#preview{
+		float : right;
+		height:100%;
+		width:50%;
+	}
+
+</style>
   </head>
   <body>
+	<div id="gallery"></div>
+	<div id="preview">
+		<iframe id="aha" src="http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html"></iframe>
+	</div>	
+	<div id="ecstasy"></div>
     <div id="root"></div>
     <script type="text/javascript">
 	 
 	$.getJSON("https://spreadsheets.google.com/feeds/list/1C-wp3RLU9Vv5QCEH6-akGWTNIyXI_xz9E6GrhCD6nMQ/od6/public/values?alt=json", function(data) {
 		//var datatata = data;
-		$("#root").html(data.feed.entry[0]['gsx$titre']['$t']);
+		$("#gallery").html(data.feed.entry[0]['gsx$titre']['$t']);
 		var valmy = data.feed.entry;
 		var lisAr = [];
 		lisAr.push('<ul>');
@@ -21,8 +43,42 @@
 		lisAr.push('</ul>');
 		
 		
-		$("#root").html(lisAr.join(''));
+		$("#gallery").html(lisAr.join(""));
+		getImdbTitle("Saint amour");
+		
 	});
+	
+	function getImdbTitle(movieName){
+		$.getJSON("http://www.omdbapi.com/?i=tt1736633", function(data) {
+			getAlloCineId(data.Title);
+		});
+	}
+	
+	function getAlloCineId(movieName){
+		$.getJSON(encodeURI("http://essearch.allocine.net/fr/autocomplete?geo2=83094&q=" + movieName), function(data) {
+			getAlloCinePressRating(data[0].id);
+		});
+	}
+	
+	function getAlloCinePressRating(movieName, movieId){
+		//$("#ecstasy").html(movieName + " : " + "");
+		
+		/*$.getJSON("http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html", function(data) {
+			var toto = data;
+		});*/
+		
+		/*$.getJSON('http://anyorigin.com/get?url=http%3A//www.allocine.fr/film/fichefilm_gen_cfilm%3D235769.html&callback=?', function(data){
+			$('#ecstasy').html(data.contents);
+		});*/
+		
+		//$('.stareval-note').innerHTML
+
+//http://essearch.allocine.net/fr/autocomplete?geo2=83094&q=hook
+
+//http://www.allocine.fr/film/fichefilm_gen_cfilm=235769.html
+
+//http://essearch.allocine.net/fr/autocomplete?geo2=83094&q=saint%20amour
+	}
 
     </script>
   </body>
